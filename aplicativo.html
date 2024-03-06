@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fitness App</title>
+    <!-- Tailwind CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link href="./font/css/fontawesome.css" rel="stylesheet" />
+    <link href="./font/css/solid.css" rel="stylesheet" />
+    <link href="./font/css/regular.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8/dist/teachablemachine-pose.min.js"></script>
+  
+  </head>
+  <body>
+    <main>
+      <!-- AQUI IRA SOLO LA PRESENTACION DEL MODELO, EL HERO ETC -->
+      <aside
+        id="default-sidebar"
+        class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
+        aria-label="Sidebar"
+      >
+        <div
+          class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800"
+        >
+          <ul class="space-y-2 font-medium">
+            <li>
+              <a
+                href="/"
+                class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group gap-4 justify-between"
+              >
+                <i class="fa-solid fa-spa"></i>
+                <span class="flex-1 ms-3">Fitness App</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="./"
+                class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group gap-4 justify-between"
+              >
+                <i class="fa-solid fa-sitemap"></i>
+                <span class="flex-1 ms-3 whitespace-nowrap">Presentación</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="./"
+                class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group gap-5 justify-between"
+              >
+                <i class="fa-solid fa-code-branch"></i>
+                <span class="flex-1 ms-3 whitespace-nowrap">Aplicativo</span>
+                <span
+                  class="inline-flex items-center justify-center px-2 ms-3 text-sm font-medium text-gray-800 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-gray-300"
+                  >Model AI</span
+                >
+              </a>
+            </li>
+          </ul>
+        </div>
+      </aside>
+      <!-- AQUI IRA EL APLICATIVO DEL MODELO DE MEDIAPIPE -->
+      <div class="p-4 sm:ml-64">
+        <div
+          class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700"
+        >
+          <div
+            class="flex items-center justify-evenly h-96 p-10 mb-2 rounded bg-gray-50 dark:bg-gray-800 shadow m-4 gap-4"
+          >
+            <canvas
+              class="w-full h-full bg-gray-300 object-contain p-5 bg-transparent rounded" id="canvas"
+            ></canvas>
+
+            <!-- Aqui -->
+            <div id="label-container" class="hidden"></div>
+            
+            <div class="grid">
+              <button class="text-gray-900 p-10 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" onclick="init('./js/train/ex_1/', 1)">Curl de Biceps</button>
+              <button class="text-gray-900 p-10 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" onclick="init('./js/train/ex_2/', 2)">Biceps "Martillo"</button>
+              <button class="text-gray-900 p-10 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" onclick="init('./js/train/ex_3/', 3)">Lateral de hombros</button>         
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-4 mb-2">
+            <div
+              class="flex flex-col items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800 shadow m-4"
+            >
+              <!-- Aqui va el code inicio-->
+              <div class="flex items-center w-full">
+                <div class="w-full max-w-screen-xl px-4 mx-auto lg:px-12">
+                  <!-- Start coding here -->
+                  <div class="relative overflow-hidden rounded-b-lg">
+                    <nav class="flex flex-row items-center justify-between p-4 gap-2" aria-label="Table navigation">
+                      <button id="stateOk" type="button" class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-red-300 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+                        <i class="fa-solid fa-dumbbell"></i>
+                      </button>
+                      <p class="text-sm">
+                        <span class="font-normal text-gray-500 dark:text-gray-400">Total repeticiones:</span>
+                        <span class="font-semibold text-gray-900 dark:text-white" id="levantamiento">0</span>
+                      </p>
+                    </nav>
+                  </div>
+                </div>
+              </div>
+              <!-- Aqui va el code fin -->
+            </div>
+            <div
+              class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800 shadow m-4"
+            >
+              <!-- Aqui va el code inicio-->
+              <div class="flex items-center w-full h-full">
+                <div class="w-full max-w-screen-xl px-4 mx-auto lg:px-12">
+                  <!-- Start coding here -->
+                  <div class="relative overflow-hidden rounded-b-lg">
+                    <nav class="flex flex-row items-center justify-between p-4 gap-2" aria-label="Table navigation">
+                      <button type="button" class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-red-300 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+                        <i class="fa-solid fa-heart"></i>
+                      </button>
+                      <p class="text-sm">
+                        <span class="font-normal text-gray-500 dark:text-gray-400">Total repeticiones:</span>
+                        <span class="font-semibold text-gray-900 dark:text-white" id="brazosHombros">0</span>
+                      </p>
+                    </nav>
+                  </div>
+                </div>
+              </div>
+              <!-- Aqui va el code fin -->
+            </div>
+            <div
+              class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800 shadow m-4"
+            >
+              <!-- Aqui va el code inicio-->
+              <div class="flex items-center w-full">
+                <div class="w-full max-w-screen-xl px-4 mx-auto lg:px-12">
+                  <!-- Start coding here -->
+                  <div class="relative overflow-hidden rounded-b-lg">
+                    <nav class="flex flex-row items-center justify-between p-4 gap-2" aria-label="Table navigation">
+                      <button type="button" class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-red-300 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+                        <i class="fa-solid fa-person-running"></i>
+                      </button>
+                      <p class="text-sm">
+                        <span class="font-normal text-gray-500 dark:text-gray-400">Total repeticiones:</span>
+                        <span class="font-semibold text-gray-900 dark:text-white" id="elevacionDehombros">0</span>
+                      </p>
+                    </nav>
+                  </div>
+                </div>
+              </div>
+              <!-- Aqui va el code fin -->
+            </div>
+          </div>
+          <div class="grid grid-cols-1 gap-4 mb-2">
+            <div
+              class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between"
+            >
+              <span
+                class="text-sm text-gray-500 sm:text-center font-medium dark:text-gray-500"
+                >© 2023
+                <a href="https://fitnesapp.com/" class="hover:underline"
+                  >Fitness App</a
+                >. Todos los derechos reservados.
+              </span>
+              <ul
+                class="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0 gap-5"
+              >
+                <li>
+                  <a href="#" class="hover:underline me-4 md:me-6"
+                    >Fernando Bautista</a
+                  >
+                </li>
+                <li>
+                  <a href="#" class="hover:underline me-4 md:me-6"
+                    >David Membreño</a
+                  >
+                </li>
+                <li>
+                  <a href="#" class="hover:underline me-4 md:me-6"
+                    >Luis Salgado</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="js/index.js"></script>
+  </body>
+</html>
